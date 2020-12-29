@@ -178,7 +178,7 @@ void CityMap::dfs(const std::string& start,
 	}
 }
 
-std::list<Path> CityMap::find3ShortestPaths(const std::string& start, 
+std::list<WeighedPath> CityMap::find3ShortestPaths(const std::string& start, 
 											const std::string& end,
 											const std::unordered_set<std::string>& closedRoads) const {
 	if (crossroads.find(start) == crossroads.end()
@@ -186,8 +186,8 @@ std::list<Path> CityMap::find3ShortestPaths(const std::string& start,
 		throw std::invalid_argument("Invalid crossroad given as an argument.");
 	}
 	const int k = 3;
-	std::priority_queue <Path, std::vector<Path>, std::greater<Path> > heap;
-	std::list<Path> shortestPaths;
+	std::priority_queue <WeighedPath, std::vector<WeighedPath>, std::greater<WeighedPath> > heap;
+	std::list<WeighedPath> shortestPaths;
 	if (closedRoads.find(start) != closedRoads.end()
 		|| closedRoads.find(end) != closedRoads.end()) {
 		return shortestPaths;
@@ -197,11 +197,11 @@ std::list<Path> CityMap::find3ShortestPaths(const std::string& start,
 		pathsToVertex[v.first] = 0;
 	}
 
-	Path ps;
+	WeighedPath ps;
 	ps.add(start, 0);
 	heap.push(ps);
 	while (!heap.empty() && pathsToVertex.at(end) < k) {
-		Path pu = heap.top();
+		WeighedPath pu = heap.top();
 		std::string u = pu.getLastVertex();
 		heap.pop();
 		pathsToVertex[u]++;
@@ -209,7 +209,7 @@ std::list<Path> CityMap::find3ShortestPaths(const std::string& start,
 		if (pathsToVertex.at(u) <= k) {
 			for (const auto& v : crossroads.at(u)) {
 				if (closedRoads.find(v.first) != closedRoads.end()) continue;
-				Path pv = pu;
+				WeighedPath pv = pu;
 				pv.add(v.first, v.second);
 				heap.push(pv);
 			}

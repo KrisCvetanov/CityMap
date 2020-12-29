@@ -11,6 +11,7 @@
 #include <fstream>
 #include "Edge.h"
 #include "Path.h"
+#include "WeighedPath.h"
 
 /// <summary>
 /// The main class in the project
@@ -64,7 +65,7 @@ public:
 	bool existsPath(const std::string&, const std::string&) const;
 
 	// task 2. and 3.
-	std::list<Path> find3ShortestPaths(const std::string&, 
+	std::list<WeighedPath> find3ShortestPaths(const std::string&, 
 										const std::string&,
 										const std::unordered_set<std::string>&) const;
 

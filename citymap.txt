@@ -1,0 +1,5 @@
+Crossroad_A Crossroad_B 100
+Crossroad_B Crossroad_C 100 Crossroad_E 100
+Crossroad_C Crossroad_D 100
+Crossroad_D Crossroad_B 100
+Crossroad_E

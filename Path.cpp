@@ -1,17 +1,15 @@
 #include "Path.h"
 
 Path::Path() {
-	cost = 0;
+
 }
 
 Path::Path(const std::list<std::string>& l) {
 	path = l;
-	cost = 0;
 }
 
-void Path::add(const std::string& vertex, double cost) {
+void Path::add(const std::string& vertex) {
 	path.push_back(vertex);
-	this->cost += cost;
 }
 
 void Path::add_front(const std::string& vertex) {
@@ -26,14 +24,6 @@ void Path::removeLastVertex() {
 	if (path.empty()) return;
 	
 	path.pop_back();
-}
-
-double Path::getCost() const {
-	return cost;
-}
-
-bool Path::operator>(const Path& other) const {
-	return cost > other.cost;
 }
 
 std::ostream& operator<<(std::ostream& os, const Path& p) {

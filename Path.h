@@ -5,22 +5,21 @@
 #include <list>
 
 /// <summary>
-/// represents a series of crossroads and the cost(length) of the path
+/// represents a series of crossroads 
 /// </summary>
 
 class Path {
-private :
+protected :
 	std::list<std::string> path;
-	double cost;
 
 public:
 	Path();
 	Path(const std::list<std::string>&);
 
 	// adds a crossroad at the end of the path
-	void add(const std::string&, double);
+	void add(const std::string&);
 
-	// adds a crossroad at the front of the path(in this case no cost is needed)
+	// adds a crossroad at the front of the path
 	void add_front(const std::string&);
 
 	// gets the last crossroad in the path
@@ -28,13 +27,6 @@ public:
 
 	// removes the last crossroad in the path
 	void removeLastVertex();
-
-	// gets the cost(length) of the path
-	double getCost() const;
-
-	// checks if *this is greater than some other path
-	// comparison is by the cost of the paths
-	bool operator>(const Path&) const;
 
 	friend std::ostream& operator<<(std::ostream&, const Path&);
 };
