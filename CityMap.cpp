@@ -19,6 +19,7 @@ void CityMap::loadCity(const std::string& dir) {
 		loadCurrCrossroad(line);
 	}
 	makeReverseLinks();
+	iFile.close();
 }
 void CityMap::loadCurrCrossroad(std::string& line) {
 	int index_start = 0, index_end = 0, lineSize = line.size();
@@ -159,11 +160,11 @@ bool CityMap::isVertexPartOfCycle(const std::string& u) const {
 	std::unordered_map<std::string, bool> marked;
 	markAllAsFalse(marked);
 	bool inCycle = false;
-	dfs(u, u, marked, 0, inCycle);
+	dfsModified(u, u, marked, 0, inCycle);
 	return inCycle;
 }
 
-void CityMap::dfs(const std::string& start,
+void CityMap::dfsModified(const std::string& start,
 	const std::string& u,
 	std::unordered_map<std::string, bool>& marked,
 	int level,
@@ -174,7 +175,21 @@ void CityMap::dfs(const std::string& start,
 	marked[u] = true;
 	for (const auto& v : crossroads.at(u)) {
 		if (v.first == start) inCycle = true;
-		if (!marked[v.first]) dfs(start, v.first, marked, level + 1, inCycle);
+		if (!marked[v.first]) dfsModified(start, v.first, marked, level + 1, inCycle);
+	}
+}
+
+void CityMap::dfsStraight(const std::string& u, std::unordered_map<std::string, bool>& vis) const {
+	vis[u] = true;
+	for (const auto& v : crossroads.at(u)) {
+		if (!vis[v.first]) dfsStraight(v.first, vis);
+	}
+}
+
+void CityMap::dfsReverse(const std::string& u, std::unordered_map<std::string, bool>& vis) const {
+	vis[u] = true;
+	for (const auto& v : reverseLinks.at(u)) {
+		if (!vis.at(v)) dfsReverse(v, vis);
 	}
 }
 
@@ -219,6 +234,8 @@ std::list<WeighedPath> CityMap::find3ShortestPaths(const std::string& start,
 }
 
 std::optional<Path> CityMap::findEulerPath() const {
+	// if there are edges in different connected components, then there is no Euler path
+	if (!checkIfAllEdgesAreFromOneComponent()) return {};
 	std::string start, end;
 	Path cityTour;
 	std::unordered_map<std::string, std::unordered_set<std::string> > markedEdges;
@@ -285,6 +302,44 @@ void CityMap::createAllEdges(std::unordered_map<std::string, std::unordered_set<
 		}
 		edges[v.first] = ends;
 	}
+}
+
+bool CityMap::checkIfAllEdgesAreFromOneComponent() const {
+	// mark all vertecies as not visited
+	std::unordered_map<std::string, bool> vis1, vis2;
+	markAllAsFalse(vis1);
+	markAllAsFalse(vis2);
+	
+	// find a vertex with in > 0 and a vertex with out > 0
+	std::optional<std::string> vertexIn = findVertexIn();
+	std::optional<std::string> vertexOut = findVertexOut();
+	if (!vertexIn.has_value() || !vertexOut.has_value()) return false;
+
+	// run dfs with normal graph and the one with reverse links
+	dfsStraight(vertexOut.value(), vis1);
+	dfsReverse(vertexIn.value(), vis2);
+
+	for (const auto& v : crossroads) {
+		// if in both dfs the current vertex was not visited, and it is not isolated(it has incident edges)
+		if (!vis1.at(v.first) && !vis2.at(v.first) && v.second.size() > 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+std::optional<std::string> CityMap::findVertexIn() const {
+	for (const auto& v : reverseLinks) {
+		if (v.second.size() > 0) return v.first;
+	}
+	return {};
+}
+
+std::optional<std::string> CityMap::findVertexOut() const {
+	for (const auto& v : crossroads) {
+		if (v.second.size() > 0) return v.first;
+	}
+	return {};
 }
 
 Path CityMap::hierholzerAlgorithm(const std::string& start, 

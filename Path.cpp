@@ -17,6 +17,10 @@ void Path::add_front(const std::string& vertex) {
 }
 
 const std::string& Path::getLastVertex() const {
+	if (path.empty()) {
+		throw std::out_of_range("Path is empty.");
+	}
+
 	return path.back();
 }
 

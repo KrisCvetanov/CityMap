@@ -36,13 +36,19 @@ private:
 	void makeReverseLinks();
 
 	// a helper method, marks all crossroads as unchecked. Used in some algorithms
-	void markAllAsFalse(std::unordered_map<std::string, bool>& marked) const;
+	void markAllAsFalse(std::unordered_map<std::string, bool>&) const;
 
 	// a helper method, marks all streets as untraversed. Used in the Euler path algorithm
 	void createAllEdges(std::unordered_map<std::string, std::unordered_set<std::string> >&) const;
 
 	// standart dfs with additional bool parameter
-	void dfs(const std::string&, const std::string&, std::unordered_map<std::string, bool>&, int, bool&) const;
+	void dfsModified(const std::string&, const std::string&, std::unordered_map<std::string, bool>&, int, bool&) const;
+
+	// standart dfs through original graph
+	void dfsStraight(const std::string&, std::unordered_map<std::string, bool>&) const;
+
+	// standart dfs through reverseLinks
+	void dfsReverse(const std::string&, std::unordered_map<std::string, bool>&) const;
 
 	// hierholzer algorithm, used in finding Euler path
 	Path hierholzerAlgorithm(const std::string&, 
@@ -54,7 +60,18 @@ private:
 	// checks if the graph is Eulerian (if there is Euler circuit)
 	bool inEqualsOutForAllVertecies(std::string&, std::string&) const;
 
+	// Used in determing if it is possible an Euler path to exist. 
+	// Checks if all edges are in a single component
+	bool checkIfAllEdgesAreFromOneComponent() const;
+
+	// Finds a vertex with in > 0
+	std::optional<std::string> findVertexIn() const;
+
+	// Finds a vertex with out > 0
+	std::optional<std::string> findVertexOut() const;
+
 public:
+
 	CityMap();
 	CityMap(const std::string&);
 
@@ -66,8 +83,8 @@ public:
 
 	// task 2. and 3.
 	std::list<WeighedPath> find3ShortestPaths(const std::string&, 
-										const std::string&,
-										const std::unordered_set<std::string>&) const;
+											  const std::string&,
+											  const std::unordered_set<std::string>&) const;
 
 	// task 4.
 	bool isVertexPartOfCycle(const std::string&) const;

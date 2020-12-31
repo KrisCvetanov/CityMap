@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <exception>
 
 /// <summary>
 /// represents a series of crossroads 

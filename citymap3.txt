@@ -1,0 +1,5 @@
+Crossroad_A
+Crossroad_B Crossroad_C 150
+Crossroad_C Crossroad_D 40
+Crossroad_D Crossroad_B 300 Crossroad_E 270
+Crossroad_E
